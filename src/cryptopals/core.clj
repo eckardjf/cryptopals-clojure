@@ -23,7 +23,7 @@
 (defn string->bytes [^String s]
   (.getBytes s))
 
-(defn bytes->string [b]
+(defn bytes->string [^bytes b]
   (String. b))
 
 
