@@ -18,3 +18,6 @@
 
 (defn hex->base64 [h]
   (bytes->base64 (hex->bytes h)))
+
+(defn xor-bytes [b1 b2]
+  (byte-array (map bit-xor b1 b2)))
