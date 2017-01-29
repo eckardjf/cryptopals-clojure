@@ -54,10 +54,3 @@
       (let [b2 (byte-array (repeat (count b1) c))
             result (bytes->string (xor-bytes b1 b2))]
         {:ch (char c) :score (score-text result) :text result}))))
-
-(defn find-xor-key [h]
-  (->> h
-       enumerate-guesses
-       (sort-by :score)
-       first
-       :ch))

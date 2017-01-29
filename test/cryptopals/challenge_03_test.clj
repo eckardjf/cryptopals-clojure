@@ -1,6 +1,6 @@
 (ns cryptopals.challenge-03-test
   (:require [clojure.test :refer :all]
-            [cryptopals.core :refer [find-xor-key]]))
+            [cryptopals.core :refer [enumerate-guesses]]))
 
 ;; Single-byte XOR cipher
 
@@ -19,4 +19,8 @@
 ;; You now have our permission to make "ETAOIN SHRDLU" jokes on Twitter.
 
 (deftest challenge-03-test
-  (is (= \X (find-xor-key "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"))))
+  (is (= \X (->> "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
+                 enumerate-guesses
+                 (sort-by :score)
+                 first
+                 :ch))))
