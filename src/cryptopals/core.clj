@@ -30,6 +30,8 @@
 (defn xor-bytes [b1 b2]
   (byte-array (map bit-xor b1 b2)))
 
+(defn xor-cipher [k b]
+  (byte-array (map bit-xor b (cycle k))))
 
 (def english-frequencies
   {\E 0.1249 \T 0.0928 \A 0.0804 \O 0.0764 \I 0.0757 \N 0.0723
