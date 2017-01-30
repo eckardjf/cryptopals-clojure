@@ -48,7 +48,7 @@
 
 (defn score-text [s]
   (reduce + (for [[c n] (frequencies (string/upper-case s))]
-              (chi-squared n (* (count s) (get english-frequencies c 0.01))))))
+              (chi-squared n (* (count s) (get english-frequencies c 0.0004))))))
 
 (defn enumerate-guesses [h]
   (let [b1 (hex->bytes h)]
