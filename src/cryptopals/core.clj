@@ -26,7 +26,6 @@
 (defn bytes->string [^bytes b]
   (String. b))
 
-
 (defn xor-bytes [b1 b2]
   (byte-array (map bit-xor b1 b2)))
 
@@ -56,3 +55,9 @@
       (let [b2 (byte-array (repeat (count b1) c))
             result (bytes->string (xor-bytes b1 b2))]
         {:ch (char c) :score (score-text result) :text result}))))
+
+(defn hamming-distance [b1 b2]
+  (reduce + (map #(Integer/bitCount %) (xor-bytes b1 b2))))
+
+(defn transpose [n b]
+  (apply map vector (partition n b)))
