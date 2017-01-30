@@ -54,7 +54,7 @@
     (for [c (range 32 128)]
       (let [b2 (byte-array (repeat (count b1) c))
             result (bytes->string (xor-bytes b1 b2))]
-        {:ch (char c) :score (score-text result) :text result}))))
+        {:ch (char c) :score (score-text result) :input h :output result}))))
 
 (defn hamming-distance [b1 b2]
   (reduce + (map #(Integer/bitCount %) (xor-bytes b1 b2))))

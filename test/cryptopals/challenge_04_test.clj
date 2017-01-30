@@ -12,7 +12,7 @@
 ;; (Your code from #3 should help.)
 
 (deftest challenge-04-test
-  (is (= \5
+  (is (= "7b5a4215415d544115415d5015455447414c155c46155f4058455c5b523f"
          (->> "resources/4.txt"
               slurp
               string/split-lines
@@ -20,4 +20,4 @@
               flatten
               (sort-by :score)
               first
-              :ch))))
+              :input))))
