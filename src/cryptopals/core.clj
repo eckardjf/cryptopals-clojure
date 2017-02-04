@@ -1,5 +1,7 @@
 (ns cryptopals.core
-  (:import (java.util Base64))
+  (:import (java.util Base64)
+           (javax.crypto Cipher)
+           (javax.crypto.spec SecretKeySpec))
   (:require [clojure.string :as string]))
 
 (defn hex->bytes [h]
@@ -29,8 +31,8 @@
 (defn xor-bytes [bs1 bs2]
   (byte-array (map bit-xor bs1 bs2)))
 
-(defn xor-cipher [ks bs]
-  (byte-array (map bit-xor bs (cycle ks))))
+(defn xor-cipher [k bs]
+  (byte-array (map bit-xor bs (cycle k))))
 
 (def english-frequencies
   {\E 0.1249 \T 0.0928 \A 0.0804 \O 0.0764 \I 0.0757 \N 0.0723
@@ -87,3 +89,15 @@
 
 (defn break-repeating-key-xor [n bs]
   (apply str (map break-single-char-xor (transpose n bs))))
+
+(defn aes-ecb-encrypt [k bs]
+  (let [key-spec (SecretKeySpec. k "AES")
+        cipher (Cipher/getInstance "AES/ECB/NoPadding")]
+    (.init cipher Cipher/ENCRYPT_MODE key-spec)
+    (.doFinal cipher bs)))
+
+(defn aes-ecb-decrypt [k bs]
+  (let [key-spec (SecretKeySpec. k "AES")
+        cipher (Cipher/getInstance "AES/ECB/NoPadding")]
+    (.init cipher Cipher/DECRYPT_MODE key-spec)
+    (.doFinal cipher bs)))
