@@ -55,8 +55,35 @@
           result (bytes->string (xor-bytes b k))]
       {:ch (char c) :score (score-text result) :input (bytes->hex b) :output result})))
 
+(defn break-single-char-xor [b]
+  (->> b
+       enumerate-guesses
+       (sort-by :score)
+       first
+       :ch))
+
 (defn hamming-distance [b1 b2]
   (reduce + (map #(Integer/bitCount %) (xor-bytes b1 b2))))
 
 (defn transpose [n b]
   (apply map vector (partition n b)))
+
+(defn avg [xs]
+  (/ (reduce + xs) (count xs)))
+
+(defn enumerate-key-size-guesses [start end b]
+  (for [n (range start (inc end))]
+    (let [blocks (partition n b)
+          pairs (partition 2 blocks)]
+      {:size n
+       :score (avg (map #(/ (apply hamming-distance %) n) pairs))})))
+
+(defn determine-key-size [b]
+  (->> b
+       (enumerate-key-size-guesses 2 40)
+       (sort-by :score)
+       first
+       :size))
+
+(defn break-repeating-key-xor [n b]
+  (apply str (map break-single-char-xor (transpose n b))))
