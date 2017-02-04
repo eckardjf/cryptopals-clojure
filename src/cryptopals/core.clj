@@ -49,12 +49,11 @@
   (reduce + (for [[c n] (frequencies (string/upper-case s))]
               (chi-squared n (* (count s) (get english-frequencies c 0.0004))))))
 
-(defn enumerate-guesses [h]
-  (let [b1 (hex->bytes h)]
-    (for [c (range 32 128)]
-      (let [b2 (byte-array (repeat (count b1) c))
-            result (bytes->string (xor-bytes b1 b2))]
-        {:ch (char c) :score (score-text result) :input h :output result}))))
+(defn enumerate-guesses [b]
+  (for [c (range 32 128)]
+    (let [k (byte-array (repeat (count b) c))
+          result (bytes->string (xor-bytes b k))]
+      {:ch (char c) :score (score-text result) :input (bytes->hex b) :output result})))
 
 (defn hamming-distance [b1 b2]
   (reduce + (map #(Integer/bitCount %) (xor-bytes b1 b2))))

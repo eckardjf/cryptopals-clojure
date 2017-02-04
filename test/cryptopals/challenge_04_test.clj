@@ -1,7 +1,7 @@
 (ns cryptopals.challenge-04-test
   (:require [clojure.string :as string]
             [clojure.test :refer :all]
-            [cryptopals.core :refer [enumerate-guesses]]))
+            [cryptopals.core :refer [enumerate-guesses hex->bytes]]))
 
 ;; Detect single-character XOR
 
@@ -16,7 +16,7 @@
          (->> "resources/4.txt"
               slurp
               string/split-lines
-              (map enumerate-guesses)
+              (map (comp enumerate-guesses hex->bytes))
               flatten
               (sort-by :score)
               first
