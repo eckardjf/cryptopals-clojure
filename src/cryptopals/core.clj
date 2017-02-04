@@ -8,14 +8,14 @@
        (map #(Integer/parseInt (apply str %) 16))
        byte-array))
 
-(defn bytes->hex [b]
-  (apply str (map (partial format "%02x") b)))
+(defn bytes->hex [bs]
+  (apply str (map (partial format "%02x") bs)))
 
 (defn base64->bytes [^String s]
   (.decode (Base64/getMimeDecoder) s))
 
-(defn bytes->base64 [b]
-  (.encodeToString (Base64/getEncoder) b))
+(defn bytes->base64 [bs]
+  (.encodeToString (Base64/getEncoder) bs))
 
 (defn hex->base64 [h]
   (bytes->base64 (hex->bytes h)))
@@ -23,14 +23,14 @@
 (defn string->bytes [^String s]
   (.getBytes s))
 
-(defn bytes->string [^bytes b]
-  (String. b))
+(defn bytes->string [^bytes bs]
+  (String. bs))
 
-(defn xor-bytes [b1 b2]
-  (byte-array (map bit-xor b1 b2)))
+(defn xor-bytes [bs1 bs2]
+  (byte-array (map bit-xor bs1 bs2)))
 
-(defn xor-cipher [k b]
-  (byte-array (map bit-xor b (cycle k))))
+(defn xor-cipher [ks bs]
+  (byte-array (map bit-xor bs (cycle ks))))
 
 (def english-frequencies
   {\E 0.1249 \T 0.0928 \A 0.0804 \O 0.0764 \I 0.0757 \N 0.0723
@@ -49,41 +49,41 @@
   (reduce + (for [[c n] (frequencies (string/upper-case s))]
               (chi-squared n (* (count s) (get english-frequencies c 0.0004))))))
 
-(defn enumerate-guesses [b]
+(defn enumerate-guesses [bs]
   (for [c (range 32 128)]
-    (let [k (byte-array (repeat (count b) c))
-          result (bytes->string (xor-bytes b k))]
-      {:ch (char c) :score (score-text result) :input (bytes->hex b) :output result})))
+    (let [ks (byte-array (repeat (count bs) c))
+          result (bytes->string (xor-bytes bs ks))]
+      {:ch (char c) :score (score-text result) :input (bytes->hex bs) :output result})))
 
-(defn break-single-char-xor [b]
-  (->> b
+(defn break-single-char-xor [bs]
+  (->> bs
        enumerate-guesses
        (sort-by :score)
        first
        :ch))
 
-(defn hamming-distance [b1 b2]
-  (reduce + (map #(Integer/bitCount %) (xor-bytes b1 b2))))
+(defn hamming-distance [bs1 bs2]
+  (reduce + (map #(Integer/bitCount %) (xor-bytes bs1 bs2))))
 
-(defn transpose [n b]
-  (apply map vector (partition n b)))
+(defn transpose [n xs]
+  (apply map vector (partition n xs)))
 
 (defn avg [xs]
   (/ (reduce + xs) (count xs)))
 
-(defn enumerate-key-size-guesses [start end b]
+(defn enumerate-key-size-guesses [start end bs]
   (for [n (range start (inc end))]
-    (let [blocks (partition n b)
+    (let [blocks (partition n bs)
           pairs (partition 2 blocks)]
       {:size n
        :score (avg (map #(/ (apply hamming-distance %) n) pairs))})))
 
-(defn determine-key-size [b]
-  (->> b
+(defn determine-key-size [bs]
+  (->> bs
        (enumerate-key-size-guesses 2 40)
        (sort-by :score)
        first
        :size))
 
-(defn break-repeating-key-xor [n b]
-  (apply str (map break-single-char-xor (transpose n b))))
+(defn break-repeating-key-xor [n bs]
+  (apply str (map break-single-char-xor (transpose n bs))))
