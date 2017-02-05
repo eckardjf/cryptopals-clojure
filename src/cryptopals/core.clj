@@ -101,3 +101,7 @@
         cipher (Cipher/getInstance "AES/ECB/NoPadding")]
     (.init cipher Cipher/DECRYPT_MODE key-spec)
     (.doFinal cipher bs)))
+
+(defn has-duplicate-blocks? [h]
+  (let [blocks (->> h hex->bytes (partition 16))]
+    (< (count (distinct blocks)) (count blocks))))
