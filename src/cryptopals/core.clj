@@ -105,3 +105,7 @@
 (defn has-duplicate-blocks? [h]
   (let [blocks (->> h hex->bytes (partition 16))]
     (< (count (distinct blocks)) (count blocks))))
+
+(defn pkcs7-pad [n bs]
+  (let [p (- n (mod (count bs) n))]
+    (byte-array (concat bs (repeat p p)))))
