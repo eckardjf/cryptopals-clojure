@@ -115,7 +115,7 @@
     (loop [acc []
            remaining (partition 16 bs)]
       (if (empty? remaining)
-        (byte-array (flatten acc))
+        (byte-array (mapcat seq acc))
         (let [current (first remaining)
               previous (or (last acc) iv)]
           (recur (conj acc (encrypt (xor-bytes current previous)))
