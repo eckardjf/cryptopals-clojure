@@ -65,5 +65,7 @@
            (->> "resources/8.txt"
                 slurp
                 string/split-lines
+                (map hex->bytes)
                 (filter has-duplicate-blocks?)
-                first)))))
+                first
+                bytes->hex)))))

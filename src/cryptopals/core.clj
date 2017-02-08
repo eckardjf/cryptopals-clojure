@@ -102,9 +102,11 @@
     (.init cipher Cipher/DECRYPT_MODE key-spec)
     (.doFinal cipher bs)))
 
-(defn has-duplicate-blocks? [h]
-  (let [blocks (->> h hex->bytes (partition 16))]
-    (< (count (distinct blocks)) (count blocks))))
+(defn has-duplicates? [xs]
+  (< (count (distinct xs)) (count xs)))
+
+(defn has-duplicate-blocks? [bs]
+  (->> bs (partition 16) has-duplicates?))
 
 (defn pkcs7-pad [n bs]
   (let [p (- n (mod (count bs) n))]
