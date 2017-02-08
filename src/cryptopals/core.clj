@@ -133,3 +133,21 @@
               previous (or (second remaining) iv)]
           (recur (conj acc (xor-bytes previous (decrypt (byte-array current))))
                  (rest remaining)))))))
+
+(defn rand-bytes [n]
+  (byte-array (repeatedly n #(rand-int 256))))
+
+(defn encryption-oracle [bs]
+  (let [block-size 16
+        k (rand-bytes block-size)
+        prefix (rand-bytes (+ 5 (rand-int 6)))
+        suffix (rand-bytes (+ 5 (rand-int 6)))
+        plaintext (pkcs7-pad block-size (concat prefix bs suffix))]
+    (if (zero? (rand-int 2))
+      {:mode   :ecb
+       :output (aes-ecb-encrypt k plaintext)}
+      {:mode   :cbc
+       :output (aes-cbc-encrypt (rand-bytes block-size) k plaintext)})))
+
+(defn detect-mode [bs]
+  (if (has-duplicate-blocks? bs) :ecb :cbc))

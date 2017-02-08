@@ -16,3 +16,11 @@
           ciphertext (->> "resources/10.txt" slurp base64->bytes)]
       (is (-> (bytes->string (aes-cbc-decrypt iv k ciphertext))
               (.startsWith "I'm back and I'm ringin' the bell"))))))
+
+(deftest challenge-11-test
+  (testing "An ECB/CBC detection oracle"
+    (let [block-size 16
+          input (byte-array (repeat (* block-size 5) 0))]
+      (is (every? #(= (:mode %) (:detected-mode %))
+                  (map #(assoc % :detected-mode (detect-mode (:output %)))
+                       (repeatedly 20 #(encryption-oracle input))))))))
