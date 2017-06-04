@@ -53,7 +53,7 @@
 
 (defn enumerate-guesses [bs]
   (for [c (range 32 128)]
-    (let [ks (byte-array (repeat (count bs) c))
+    (let [ks (byte-array (count bs) (byte c))
           result (bytes->string (xor-bytes bs ks))]
       {:ch (char c) :score (score-text result) :input (bytes->hex bs) :output result})))
 
