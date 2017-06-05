@@ -22,5 +22,5 @@
     (let [block-size 16
           input (byte-array (* block-size 3) (byte 0x00))]
       (is (every? #(= (:mode %) (:detected-mode %))
-                  (map #(assoc % :detected-mode (detect-mode (:output %)))
+                  (map #(assoc % :detected-mode (detect-mode (:output %) block-size))
                        (repeatedly 20 #(encryption-oracle input))))))))

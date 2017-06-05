@@ -149,5 +149,6 @@
       {:mode   :cbc
        :output (aes-cbc-encrypt (rand-bytes block-size) k plaintext)})))
 
-(defn detect-mode [bs]
-  (if (has-duplicate-blocks? bs) :ecb :cbc))
+(defn detect-mode [bs block-size]
+  (let [[a b] (take 2 (drop 1 (partition block-size bs)))]
+    (if (= a b) :ecb :cbc)))
