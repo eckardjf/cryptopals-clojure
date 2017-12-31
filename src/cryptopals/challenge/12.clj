@@ -42,11 +42,12 @@
 
 (defn recover-suffix [f]
   (let [block-size (determine-block-size f)]
-    (loop [known []]
-      (let [next-byte (recover-next-byte f block-size known)]
-        (if (= 1 next-byte)
-          (-> known byte-array bytes->string)
-          (recur (conj known next-byte)))))))
+    (when (ecb? f block-size)
+      (loop [known []]
+        (let [next-byte (recover-next-byte f block-size known)]
+          (if (= 1 next-byte)
+            (-> known byte-array bytes->string)
+            (recur (conj known next-byte))))))))
 
 (deftest challenge-12-test
   (testing "Byte-at-a-time ECB decryption (Simple)"
