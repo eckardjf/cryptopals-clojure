@@ -3,17 +3,17 @@
             [cryptopals.core :refer :all]
             [cryptopals.block :refer [pkcs7-pad aes-ecb-encrypt]]))
 
-(def plaintext (-> (str "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg"
-                        "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq"
-                        "dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg"
-                        "YnkK")
-                   base64->bytes))
+(def unknown-suffix (-> (str "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg"
+                             "aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq"
+                             "dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg"
+                             "YnkK")
+                        base64->bytes))
 
 (def unknown-block-size 16)
 (def unknown-key (rand-bytes unknown-block-size))
 
 (defn oracle [bs]
-  (->> (concat bs plaintext)
+  (->> (concat bs unknown-suffix)
        (pkcs7-pad unknown-block-size)
        (aes-ecb-encrypt unknown-key)))
 
