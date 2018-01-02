@@ -2,31 +2,33 @@
   (:import (java.util Base64)))
 
 (defn hex->bytes [h]
-  (->> h
-       (partition 2)
-       (map #(Integer/parseInt (apply str %) 16))
-       byte-array))
+  (some->> h
+           (partition 2)
+           (map #(Integer/parseInt (apply str %) 16))
+           byte-array))
 
 (defn bytes->hex [bs]
-  (apply str (map (partial format "%02x") bs)))
+  (some->> bs
+           (map (partial format "%02x"))
+           (apply str)))
 
 (defn base64->bytes [^String s]
-  (.decode (Base64/getMimeDecoder) s))
+  (some->> s (.decode (Base64/getMimeDecoder))))
 
 (defn bytes->base64 [bs]
-  (.encodeToString (Base64/getEncoder) bs))
+  (some->> bs (.encodeToString (Base64/getEncoder))))
 
 (defn hex->base64 [h]
-  (bytes->base64 (hex->bytes h)))
+  (some->> h hex->bytes bytes->base64))
 
 (defn string->bytes [^String s]
-  (.getBytes s))
+  (some->> s (.getBytes)))
 
 (defn bytes->string [^bytes bs]
-  (String. bs))
+  (some->> bs (String.)))
 
 (defn xor-bytes [bs1 bs2]
   (byte-array (map bit-xor bs1 bs2)))
 
 (defn rand-bytes [n]
-  (byte-array (repeatedly n #(rand-int 256))))
+  (some-> n (repeatedly #(rand-int 256)) byte-array))
