@@ -1,4 +1,5 @@
 (ns cryptopals.core
+  (:require [clojure.java.io :as io])
   (:import (java.util Base64)))
 
 (defn hex->bytes [h]
@@ -32,3 +33,6 @@
 
 (defn rand-bytes [n]
   (some-> n (repeatedly #(rand-int 256)) byte-array))
+
+(defn bytes->file [bs filename]
+  (some-> bs (io/copy (io/file filename))))
