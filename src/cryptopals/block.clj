@@ -4,17 +4,15 @@
   (:require [cryptopals.core :refer [xor-bytes]]))
 
 (defn aes-ecb-encrypt [k bs]
-  (let [key-spec (SecretKeySpec. k "AES")
-        cipher (Cipher/getInstance "AES/ECB/NoPadding")]
-    (.init cipher Cipher/ENCRYPT_MODE key-spec)
-    (.doFinal cipher bs)))
+  (-> (doto (Cipher/getInstance "AES/ECB/NoPadding")
+        (.init Cipher/ENCRYPT_MODE (SecretKeySpec. k "AES")))
+      (.doFinal bs)))
 
 (defn aes-ecb-decrypt [k bs]
-  (let [key-spec (SecretKeySpec. k "AES")
-        cipher (Cipher/getInstance "AES/ECB/NoPadding")]
-    (.init cipher Cipher/DECRYPT_MODE key-spec)
-    (.doFinal cipher bs)))
-
+  (-> (doto (Cipher/getInstance "AES/ECB/NoPadding")
+        (.init Cipher/DECRYPT_MODE (SecretKeySpec. k "AES")))
+      (.doFinal bs)))
+ 
 (defn pkcs7-pad [n bs]
   (let [p (- n (mod (count bs) n))]
     (byte-array (concat bs (repeat p p)))))
