@@ -31,10 +31,10 @@
 
 (defn recover-next-byte [f block-size known]
   (let [position (count known)
-        block (int (quot position block-size))
-        pad (dec (- block-size (mod position block-size)))
-        prefix (byte-array pad (byte \A))
-        target (nth (partition block-size (f prefix)) block)]
+        block    (int (quot position block-size))
+        pad      (dec (- block-size (mod position block-size)))
+        prefix   (byte-array pad (byte \A))
+        target   (nth (partition block-size (f prefix)) block)]
     (first (filter (fn [i]
                      (let [payload (concat prefix known [i])]
                        (= target (nth (partition block-size (f payload)) block))))
