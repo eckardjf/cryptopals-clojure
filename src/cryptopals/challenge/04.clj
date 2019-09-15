@@ -10,8 +10,6 @@
            (->> "resources/4.txt"
                 slurp
                 string/split-lines
-                (map (comp enumerate-guesses hex->bytes))
-                flatten
-                (sort-by :score)
-                first
+                (mapcat (comp enumerate-guesses hex->bytes))
+                (apply min-key :score)
                 :input)))))

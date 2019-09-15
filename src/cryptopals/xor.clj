@@ -31,8 +31,7 @@
 (defn break-single-char-xor [bs]
   (->> bs
        enumerate-guesses
-       (sort-by :score)
-       first
+       (apply min-key :score)
        :ch))
 
 (defn hamming-distance [bs1 bs2]
@@ -54,8 +53,7 @@
 (defn determine-key-size [bs]
   (->> bs
        (enumerate-key-size-guesses 2 40)
-       (sort-by :score)
-       first
+       (apply min-key :score)
        :size))
 
 (defn break-repeating-key-xor [n bs]
